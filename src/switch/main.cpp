@@ -252,31 +252,32 @@ void DeinitRenderer()
     glDeleteProgram(Program);
 }
 
-void FillAudioBuffer() {
-    s16 buf_in[710 * 2];
+void FillAudioBuffer()
+{
+    s16 buf_in[984 * 2];
     s16* buf_out = (s16*)BufferData;
 
-    int num_in = SPU::ReadOutput(buf_in, 710);
-    int num_out = 1024;
+    int num_in = SPU::ReadOutput(buf_in, 984);
+    int num_out = 1440;
 
     int margin = 6;
-    if (num_in < 710 - margin)
+    if (num_in < 984 - margin)
     {
         int last = num_in - 1;
         if (last < 0)
             last = 0;
 
-        for (int i = num_in; i < 710 - margin; i++)
+        for (int i = num_in; i < 984 - margin; i++)
             ((u32*)buf_in)[i] = ((u32*)buf_in)[last];
 
-        num_in = 710 - margin;
+        num_in = 984 - margin;
     }
 
     float res_incr = (float)num_in / num_out;
     float res_timer = 0;
     int res_pos = 0;
 
-    for (int i = 0; i < 1024; i++)
+    for (int i = 0; i < 1440; i++)
     {
         buf_out[i * 2] = buf_in[res_pos * 2];
         buf_out[i * 2 + 1] = buf_in[res_pos * 2 + 1];
@@ -493,11 +494,11 @@ int main(int argc, char** argv)
     audoutInitialize();
     audoutStartAudioOut();
 
-    BufferData = (u8*)memalign(0x1000, 710 * 2 * 4);
+    BufferData = (u8*)memalign(0x1000, (1440 * 2 * 2 + 0xfff) & ~0xfff);
     AudioBuffer.next = NULL;
     AudioBuffer.buffer = BufferData;
-    AudioBuffer.buffer_size = 710 * 2 * 4;
-    AudioBuffer.data_size = 710 * 2 * 4;
+    AudioBuffer.buffer_size = (1440 * 2 * 2 + 0xfff) & ~0xfff;
+    AudioBuffer.data_size = 1440 * 2 * 2;
     AudioBuffer.data_offset = 0;
 
     Thread audio;
