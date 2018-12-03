@@ -581,6 +581,7 @@ int main(int argc, char** argv)
     audoutExit();
     DeinitRenderer();
     DeinitEGL();
+    pcvSetClockRate(PcvModule_Cpu, 1020000000);
     pcvExit();
     consoleExit(NULL);
     return 0;
